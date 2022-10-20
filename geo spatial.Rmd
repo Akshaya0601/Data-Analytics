@@ -1,0 +1,94 @@
+---
+title: "spatial"
+output:
+  word_document: default
+  html_document: default
+date: '2022-05-31'
+---
+
+### This data set tells about Age, Bad.past.experience, Delay.of.delivery.person.getting.assigned, Delay.of.delivery.person.picking.up.food,Delivery.person.ability, Ease.and.convenient, Easy.Payment.option, Educational.Qualifications, Family.size, Freshness, Gender, Good.Food.quality, Good.Quantity, Good.Road.Condition, Good.Taste, Good.Tracking.system,Google.Maps.Accuracy, Health.Concern, High.Quality.of.package, Influence.of.rating, Influence.of.time,Late.Delivery, latitude, Less.Delivery.time, Long.delivery.time, longitude, Low.quantity.low.time,Marital.Status, Maximum.wait.time, Meal.P1., Meal.P2., Medium..P1., Medium..P2., Missing.item, Monthly.Income,More.Offers.and.Discount, More.restaurant.choices, Number.of.calls, Occupation, Order.placed.by.mistake,Order.Time, Output, Perference.P1., Perference.P2., Pin.code, Politeness, Poor.Hygiene,Residence.in.busy.location, Reviews, Self.Cooking, Temperature, Time.saving, Unaffordable, Unavailability,Wrong.order.delivered.
+ 
+### Hi
+
+```{r setup, include=FALSE}
+spatialData=read.csv(file.choose(), header = T)
+View(spatialData)
+attach(spatialData)
+str(spatialData)
+summary(spatialData)
+#selecting particular features
+spatial_df = spatialData[c(1,3,4,5,8,9)]
+spatial_df
+
+unique(Pin.code)
+
+#adding new column (vectorization)
+
+label_id = as.numeric(as.factor(Gender))
+unique(spatial_df[c(2,3)])
+unique(label_id)
+names(spatial_df)
+
+
+library(leaflet)
+
+#applying colors
+getcolor = function(spatial_df)
+{
+  sapply(label_id,function(label_id) #call by reference [reference = label_id]
+  {
+    if(label_id == 1)
+    {
+      "red"
+    }
+    else if(label_id == 2)
+    {
+      "green"
+    }
+    else if(label_id == 3)
+    {
+      "blue"
+    }
+    else
+    {
+      "blue"
+    }
+  }
+  )
+}
+
+
+
+
+icons = awesomeIcons(icon="ios-close",iconColor = "blue", library = "ion",markerColor =getcolor(spatial_df))
+
+icons
+#calling leaflet functing to a r object.
+admin_name_map <- leaflet() %>%
+  addAwesomeMarkers(data = spatial_df, lat = latitude,  lng = longitude,icon = icons,
+                    popup = Gender, label = Marital.Status)%>%
+  
+  #this is the intergeration part with Open Street Map using pipeline
+  addTiles(group ="OSM")
+
+admin_name_map
+
+mean(spatialData$Age)
+
+mean(spatialData$Family.size)
+
+boxplot(Age~Gender , col=c(2,3))
+
+boxplot(Age~Occupation , col =c(5,2,3,4))
+
+boxplot(Age~Marital.Status , col = c(4,2,3))
+
+hist(Pin.code)
+
+```
+# red color: Male
+# pink color :Female
+
+### From this data set we understand that In Bangalore most of the people who order food throught online are married and the average age limit of students who order food through online are 24  and the average family size of people who order food is 3 and the gender who order more food through online is Male.Mostly the people who order food are educated people.
+
+###Here people who order food through online whos age limit between 25 to 30 are employees, and Above 30 are house wife and few self employeed people and age limit between 20 to 25 are students. From this we come to know people who mostly order foods are Employeed and they are male. Here most most of the people prefer not to say their marital status so we can assume from the data set the most people order food are married employed and they are male.
